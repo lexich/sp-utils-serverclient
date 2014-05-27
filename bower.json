@@ -1,0 +1,30 @@
+{
+  "name": "sp-utils-serverclient",
+  "version": "0.0.1",
+  "authors": [
+    "lexich121@gmail.com"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "homepage": "https://github.com/lexich/sp-utils-serverclient",
+  "description": "ServerClient for sp-utils",
+  "main": "build/ServerClient",
+  "keywords": [
+    "sp-utils"
+  ],
+  "private": true,
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "dependencies": {
+    "jquery": ">=1.10.1"
+  }
+}
