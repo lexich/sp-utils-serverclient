@@ -18,7 +18,7 @@
   "keywords": [
     "sp-utils"
   ],
-  "private": true,
+  "private": false,
   "moduleType": [
     "amd",
     "globals",
