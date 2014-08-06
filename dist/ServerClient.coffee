@@ -28,7 +28,7 @@ ServerClientRequire = ($)->
       "#{name}#{url}"
 
   class ServerClient
-    @version = "0.0.1"
+    @version = "0.0.3"
     constructor:(options={})->
       @lock = new Lock {accept_logs:options.accept_logs}
       @initialize.apply this, arguments
@@ -42,7 +42,7 @@ ServerClientRequire = ($)->
       lockname = options.type + options.lock
       url = options.url
       options.lock = null
-      return unless @lock.trylock url, lockname
+      return async.reject('lock error') unless @lock.trylock url, lockname
       options.stub = null
       $.ajax(options)
         .done (data,info, options)->

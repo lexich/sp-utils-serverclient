@@ -52,7 +52,7 @@ ServerClientRequire = function($) {
 
   })();
   return ServerClient = (function() {
-    ServerClient.version = "0.0.1";
+    ServerClient.version = "0.0.3";
 
     function ServerClient(options) {
       if (options == null) {
@@ -76,7 +76,7 @@ ServerClientRequire = function($) {
       url = options.url;
       options.lock = null;
       if (!this.lock.trylock(url, lockname)) {
-        return;
+        return async.reject('lock error');
       }
       options.stub = null;
       return $.ajax(options).done(function(data, info, options) {
