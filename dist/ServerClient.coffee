@@ -4,14 +4,13 @@ ServerClientRequire = ($)->
     constructor:(@accept_logs=false)->
       @_locks = {}
 
-    trylock:(url, name)->
+    trylock:(url, name, _func)->
       key = @hash url, name
       if !!@_locks[key]
         console.warn "tryLock #{url} #{name}" if @accept_logs
-        false
       else
-        @_locks[key] = true
-        true
+        @_locks[key] = _func()
+      @_locks[key]
 
     unlock:(url="", name="")->
       key = @hash url, name
@@ -28,7 +27,7 @@ ServerClientRequire = ($)->
       "#{name}#{url}"
 
   class ServerClient
-    @version = "0.0.3"
+    @version = "0.0.4"
     constructor:(options={})->
       @lock = new Lock {accept_logs:options.accept_logs}
       @initialize.apply this, arguments
@@ -42,21 +41,21 @@ ServerClientRequire = ($)->
       lockname = options.type + options.lock
       url = options.url
       options.lock = null
-      return async.reject('lock error') unless @lock.trylock url, lockname
-      options.stub = null
-      $.ajax(options)
-        .done (data,info, options)->
-          if options.status is 204
-            async.resolve data
-          else if not data or data.result is "error"
-            async.reject data
-          else
-            async.resolve data
+      @lock.trylock url, lockname, =>
+        options.stub = null
+        $.ajax(options)
+          .done (data,info, options)->
+            if options.status is 204
+              async.resolve data
+            else if not data or data.result is "error"
+              async.reject data
+            else
+              async.resolve data
 
-        .fail (err)->
-          async.reject err
-        .always =>
-          @lock.unlock url, lockname
+          .fail (err)->
+            async.reject err
+          .always =>
+            @lock.unlock url, lockname
 
     ajax:(options)->
       async = $.Deferred()

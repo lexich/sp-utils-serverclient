@@ -8,18 +8,17 @@ ServerClientRequire = function($) {
       this._locks = {};
     }
 
-    Lock.prototype.trylock = function(url, name) {
+    Lock.prototype.trylock = function(url, name, _func) {
       var key;
       key = this.hash(url, name);
       if (!!this._locks[key]) {
         if (this.accept_logs) {
           console.warn("tryLock " + url + " " + name);
         }
-        return false;
       } else {
-        this._locks[key] = true;
-        return true;
+        this._locks[key] = _func();
       }
+      return this._locks[key];
     };
 
     Lock.prototype.unlock = function(url, name) {
@@ -52,7 +51,7 @@ ServerClientRequire = function($) {
 
   })();
   return ServerClient = (function() {
-    ServerClient.version = "0.0.3";
+    ServerClient.version = "0.0.4";
 
     function ServerClient(options) {
       if (options == null) {
@@ -75,23 +74,22 @@ ServerClientRequire = function($) {
       lockname = options.type + options.lock;
       url = options.url;
       options.lock = null;
-      if (!this.lock.trylock(url, lockname)) {
-        return async.reject('lock error');
-      }
-      options.stub = null;
-      return $.ajax(options).done(function(data, info, options) {
-        if (options.status === 204) {
-          return async.resolve(data);
-        } else if (!data || data.result === "error") {
-          return async.reject(data);
-        } else {
-          return async.resolve(data);
-        }
-      }).fail(function(err) {
-        return async.reject(err);
-      }).always((function(_this) {
+      return this.lock.trylock(url, lockname, (function(_this) {
         return function() {
-          return _this.lock.unlock(url, lockname);
+          options.stub = null;
+          return $.ajax(options).done(function(data, info, options) {
+            if (options.status === 204) {
+              return async.resolve(data);
+            } else if (!data || data.result === "error") {
+              return async.reject(data);
+            } else {
+              return async.resolve(data);
+            }
+          }).fail(function(err) {
+            return async.reject(err);
+          }).always(function() {
+            return _this.lock.unlock(url, lockname);
+          });
         };
       })(this));
     };
