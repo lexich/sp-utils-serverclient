@@ -27,7 +27,7 @@ ServerClientRequire = ($)->
       "#{name}#{url}"
 
   class ServerClient
-    @version = "0.0.4"
+    @version = "0.0.5"
     constructor:(options={})->
       @lock = new Lock {accept_logs:options.accept_logs}
       @initialize.apply this, arguments
@@ -85,6 +85,10 @@ ServerClientRequire = ($)->
       options.type = "PUT"
       @ajax options
 
+    patch:(options)->
+      options or options = {}
+      options.type = "PATCH"
+      @ajax options
 
     delete:(options)->
       options or options = {}
