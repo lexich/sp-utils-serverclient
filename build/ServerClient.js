@@ -51,7 +51,7 @@ ServerClientRequire = function($) {
 
   })();
   return ServerClient = (function() {
-    ServerClient.version = "0.0.4";
+    ServerClient.version = "0.0.5";
 
     function ServerClient(options) {
       if (options == null) {
