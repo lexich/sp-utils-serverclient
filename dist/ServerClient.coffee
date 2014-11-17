@@ -85,6 +85,10 @@ ServerClientRequire = ($)->
       options.type = "PUT"
       @ajax options
 
+    patch:(options)->
+      options or options = {}
+      options.type = "PATCH"
+      @ajax options
 
     delete:(options)->
       options or options = {}

@@ -130,6 +130,12 @@ ServerClientRequire = function($) {
       return this.ajax(options);
     };
 
+    ServerClient.prototype.patch = function(options) {
+      options || (options = {});
+      options.type = "PATCH";
+      return this.ajax(options);
+    };
+
     ServerClient.prototype["delete"] = function(options) {
       var async;
       options || (options = {});
